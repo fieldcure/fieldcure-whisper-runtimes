@@ -1,0 +1,12 @@
+# Build script outputs (binaries, manifest, restore cache).
+# Re-buildable from scripts/build-release.ps1 — never committed.
+/out/
+**/_work/
+
+# Common .NET / OS noise
+bin/
+obj/
+.vs/
+*.user
+.DS_Store
+Thumbs.db

@@ -1,0 +1,149 @@
+# Repackages the upstream Whisper.net.Runtime.* nupkgs at a given version into
+# this repo's release asset layout (cpu / cuda / vulkan, win-x64) and publishes
+# a GitHub Release.
+#
+# Triggers
+#   * Tag push `v*`        → publishes a release tagged with the pushed tag.
+#   * Manual dispatch      → runs against an arbitrary version without tagging
+#                            (useful for dry runs and for re-running a release
+#                            after editing scripts/build-release.ps1).
+#
+# Why a Windows runner: the win-x64 native binaries are extracted from the
+# upstream nupkgs as-is (no compilation), so any runner with `dotnet restore`
+# would technically work, but keeping it on Windows mirrors the host class our
+# downstream consumers actually run on. PowerShell 7 is preinstalled.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      whisper_net_version:
+        description: 'Whisper.net version to repackage (e.g. 1.9.0)'
+        required: true
+        type: string
+      publish:
+        description: 'Publish to GitHub Releases (off = build artifacts only)'
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # required for `gh release create`
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Resolve Whisper.net version
+        id: vars
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_EVENT_NAME -eq 'push') {
+            # Strip the leading 'v' from refs/tags/v1.9.0
+            $tag = $env:GITHUB_REF -replace '^refs/tags/', ''
+            $version = $tag -replace '^v', ''
+            $publish = 'true'
+          } else {
+            $version = '${{ inputs.whisper_net_version }}'
+            $tag = "v$version"
+            $publish = '${{ inputs.publish }}'
+          }
+          "version=$version"   | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "tag=$tag"           | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "publish=$publish"   | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          Write-Host "version=$version  tag=$tag  publish=$publish"
+
+      - name: Build release artifacts
+        shell: pwsh
+        run: |
+          ./scripts/build-release.ps1 `
+            -WhisperNetVersion '${{ steps.vars.outputs.version }}' `
+            -ReleaseTag '${{ steps.vars.outputs.tag }}' `
+            -ReleaseRepo '${{ github.repository }}' `
+            -Output "${{ runner.temp }}/release-out"
+
+      - name: Upload manifest as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: manifest-${{ steps.vars.outputs.tag }}
+          path: ${{ runner.temp }}/release-out/manifest.json
+          if-no-files-found: error
+
+      - name: Upload binaries as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: assets-${{ steps.vars.outputs.tag }}
+          path: ${{ runner.temp }}/release-out/assets/*
+          if-no-files-found: error
+
+      - name: Extract release notes for tag
+        id: notes
+        shell: pwsh
+        run: |
+          $tag = '${{ steps.vars.outputs.tag }}'
+          $source = Join-Path $env:GITHUB_WORKSPACE 'RELEASENOTES.md'
+          if (-not (Test-Path $source)) {
+            throw "RELEASENOTES.md not found at $source — required for releases."
+          }
+
+          # Extract the `## <tag>` section: from the heading up to (but not
+          # including) the next `## ` heading or end-of-file. Add a per-section
+          # header with the tag so the published notes stand alone.
+          # Force UTF-8 — Windows PowerShell 5.1's default Get-Content uses the
+          # system ANSI codepage and would mangle non-ASCII content (em-dashes,
+          # CJK). PowerShell 7+ already defaults to UTF-8; -Encoding utf8 is a no-op.
+          $lines = Get-Content -LiteralPath $source -Encoding utf8
+          $start = $null
+          for ($i = 0; $i -lt $lines.Count; $i++) {
+            if ($lines[$i] -match "^##\s+$([regex]::Escape($tag))\s*$") { $start = $i; break }
+          }
+          if ($null -eq $start) {
+            throw "RELEASENOTES.md does not contain a '## $tag' section. Add one before tagging."
+          }
+          $end = $lines.Count
+          for ($i = $start + 1; $i -lt $lines.Count; $i++) {
+            if ($lines[$i] -match '^##\s+') { $end = $i; break }
+          }
+
+          $body = ($lines[($start + 1) .. ($end - 1)] -join "`n").TrimStart("`r","`n").TrimEnd()
+          $notesPath = Join-Path $env:RUNNER_TEMP "release-notes-$tag.md"
+          # BOM-free UTF-8 to keep gh / curl happy on the wire.
+          [System.IO.File]::WriteAllText(
+              $notesPath, $body,
+              (New-Object System.Text.UTF8Encoding $false))
+          Write-Host "Wrote $notesPath ($($body.Length) chars)"
+          "path=$notesPath" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Publish GitHub Release
+        if: steps.vars.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          $tag        = '${{ steps.vars.outputs.tag }}'
+          $version    = '${{ steps.vars.outputs.version }}'
+          $assetsDir  = "${{ runner.temp }}/release-out/assets"
+          $manifest   = "${{ runner.temp }}/release-out/manifest.json"
+          $notesFile  = '${{ steps.notes.outputs.path }}'
+
+          $files = @(Get-ChildItem -File -Path $assetsDir | ForEach-Object FullName)
+          $files += $manifest
+
+          gh release create $tag `
+            --title "Whisper.net runtime $version" `
+            --notes-file $notesFile `
+            --repo '${{ github.repository }}' `
+            -- $files
