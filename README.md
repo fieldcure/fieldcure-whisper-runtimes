@@ -146,7 +146,7 @@ The hosted native binaries are redistributed from upstream sources under their r
 
 - **Whisper.net** native binaries — [MIT](https://github.com/sandrohanea/whisper.net/blob/main/LICENSE.md)
 - **whisper.cpp / ggml** binaries — [MIT](https://github.com/ggml-org/whisper.cpp/blob/master/LICENSE)
-- **NVIDIA CUDA Toolkit redistributables** (`cudart64_*.dll`, `cublas*.dll`, `cublasLt*.dll`) — redistributed under [NVIDIA CUDA Toolkit EULA Attachment A](https://docs.nvidia.com/cuda/eula/). Original NVIDIA license terms apply; see [NOTICE](NOTICE).
+- **NVIDIA CUDA Toolkit redistributables** (`cudart64_*.dll`, `cublas*.dll`, `cublasLt*.dll`) — redistributed under [NVIDIA CUDA Toolkit EULA Attachment A](https://docs.nvidia.com/cuda/eula/), Release 13.2 (Apr 02, 2026). These binaries are NOT distributed as a stand-alone product; they are redistributed solely as runtime infrastructure for the FieldCure software ecosystem. Original NVIDIA license terms apply; see [NOTICE](NOTICE).
 - **Vulkan loader** — [Apache-2.0 / MIT](https://github.com/KhronosGroup/Vulkan-Loader/blob/main/LICENSE.txt)
 
 See [NOTICE](NOTICE) for full attributions and required redistribution notices.

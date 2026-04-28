@@ -1,0 +1,293 @@
+NOTICE
+======
+
+fieldcure-whisper-runtimes
+Copyright (c) 2026 FieldCure Co., Ltd.
+
+This repository redistributes pre-built native binaries from third-party
+sources for use by FieldCure.DocumentParsers.Audio and downstream consumers
+in the FieldCure software ecosystem. Each component listed below retains
+its original license. This NOTICE file enumerates the required attributions
+and license references.
+
+The redistributed binaries are provided unmodified from their upstream
+sources and carry their original metadata (file properties, embedded
+copyright strings, version info) intact.
+
+
+================================================================================
+Scope of redistribution — important context
+================================================================================
+
+This repository is NOT a stand-alone redistribution of NVIDIA CUDA Toolkit
+components or any other third-party software. The binaries hosted here are
+distribution infrastructure for the FieldCure software ecosystem — namely:
+
+  * FieldCure.DocumentParsers.Audio (audio transcription library)
+  * FieldCure.Mcp.Rag (retrieval-augmented generation MCP server)
+  * FieldCure.AssistStudio (WinUI 3 AI chat application, where applicable)
+
+These applications provide material additional functionality (audio
+transcription, document parsing, semantic search, retrieval-augmented
+generation, and conversational AI workflows) that goes substantially
+beyond the redistributed components themselves. The redistributable
+components are accessed only by these applications and their authorized
+consumers.
+
+
+================================================================================
+1. Whisper.net
+================================================================================
+
+Source:    https://github.com/sandrohanea/whisper.net
+License:   MIT
+Files:     whisper.dll (CPU/Cuda/Vulkan variants),
+           ggml-base-whisper.dll, ggml-cpu-whisper.dll,
+           ggml-cuda-whisper.dll, ggml-vulkan-whisper.dll, ggml-whisper.dll
+
+Copyright (c) Sandro Hanea and contributors.
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+
+================================================================================
+2. whisper.cpp / ggml
+================================================================================
+
+The Whisper.net native binaries listed above are built from whisper.cpp,
+which embeds ggml as a submodule.
+
+Source:    https://github.com/ggml-org/whisper.cpp
+           https://github.com/ggml-org/ggml
+License:   MIT
+
+Copyright (c) 2023-2024 The ggml authors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+================================================================================
+3. NVIDIA CUDA Toolkit Redistributable Components
+================================================================================
+
+Files redistributed:
+    cudart64_12.dll       (CUDA Runtime — Attachment A "CUDA Runtime")
+    cublas64_12.dll       (CUDA BLAS Library — Attachment A "CUDA BLAS Library")
+    cublasLt64_12.dll     (CUDA BLAS Library — Attachment A "CUDA BLAS Library")
+    (and version-specific variants thereof)
+
+Copyright (c) 2007-2026, NVIDIA Corporation & affiliates. All rights reserved.
+
+License:
+    NVIDIA Software License Agreement and CUDA Supplement to Software License
+    Agreement (collectively, the "CUDA EULA").
+
+    Authoritative source:
+        https://docs.nvidia.com/cuda/eula/
+        https://docs.nvidia.com/cuda/pdf/EULA.pdf
+
+    The above-listed files are designated as Redistributable Software in
+    Attachment A of the CUDA EULA, Section 2.6.
+
+    This NOTICE references CUDA EULA Release 13.2 (Apr 02, 2026) as the
+    version against which compliance was assessed. Subsequent EULA revisions
+    govern subsequent redistributions.
+
+------------------------------------------------------------------------------
+3.1 Compliance with CUDA EULA distribution requirements (Section 1.1.2)
+------------------------------------------------------------------------------
+
+  (1) Material additional functionality.
+      The redistributable CUDA components are integrated into FieldCure
+      software (audio transcription via Whisper, RAG indexing, conversational
+      AI workflows) which constitutes material additional functionality
+      beyond the included CUDA Toolkit Licensed Software.
+
+  (2) Application-only access.
+      The redistributed CUDA components are accessed by the FieldCure
+      application stack and its end users acting through that application;
+      not as a stand-alone library distribution.
+
+  (3) Object code unmodified.
+      Files are extracted byte-for-byte from the upstream
+      Whisper.net.Runtime.Cuda NuGet package and verified by SHA-256 hash
+      before publication. No modification, repackaging, or recompilation
+      is performed.
+
+  (4) Distribution terms consistency.
+      The terms under which FieldCure software (which embeds these
+      components) is distributed are designed to be consistent with the
+      CUDA EULA. The MIT license applied to THIS repository's own content
+      (build scripts, manifest format, README) does NOT extend to the
+      NVIDIA Redistributable Components — those remain governed solely
+      by the CUDA EULA.
+
+------------------------------------------------------------------------------
+3.2 Compliance with CUDA EULA limitations (Section 1.2)
+------------------------------------------------------------------------------
+
+  (1) No reverse engineering, decompilation, disassembly, or removal of
+      copyright or other proprietary notices is performed by FieldCure on
+      these components.
+
+  (2) Stand-alone distribution disclaimer.
+      These binaries are NOT distributed as a stand-alone product per
+      Section 1.2(2) of the CUDA EULA. They are redistributed solely as
+      a runtime dependency mechanism for the FieldCure software ecosystem
+      identified at the top of this NOTICE.
+
+  (5) No open-source license imposition.
+      Nothing in this NOTICE or in the repository's own MIT license is
+      intended to subject the NVIDIA Redistributable Components to terms
+      that would require source disclosure, derivative-work licensing, or
+      no-charge redistribution as conditions of use. The MIT terms apply
+      only to the repository's own content (excluding the redistributed
+      binaries).
+
+  (6) Critical Applications disclaimer.
+      Per CUDA EULA Section 1.2(6), the SDK as delivered is not tested or
+      certified by NVIDIA for use in connection with the design,
+      construction, maintenance, or operation of any system where the use
+      or failure of such system could result in a situation that threatens
+      the safety of human life or results in catastrophic damages
+      ("Critical Applications"). Examples enumerated in the EULA include
+      avionics, navigation, autonomous vehicle applications, AI solutions
+      for automotive products, military, medical, and life support
+      applications.
+
+      The FieldCure software ecosystem and the binaries redistributed
+      through this repository are NOT certified for Critical Applications
+      use. Downstream consumers must independently assess the suitability
+      of these components for their intended deployment context.
+
+------------------------------------------------------------------------------
+3.3 Third-party components within the redistributed CUDA libraries
+------------------------------------------------------------------------------
+
+The redistributed `cublas64_*.dll` and `cublasLt64_*.dll` binaries include
+compiled code from numerous third-party sources, each governed by its own
+license. NVIDIA enumerates these in CUDA EULA Section 2.7 (Attachment B),
+including but not limited to:
+
+  * Code from OpenAI (MIT)
+  * Code derived from work by Vasily Volkov, U.C. Berkeley (BSD)
+  * Code derived from University of Tennessee (BSD)
+  * Code derived from Davide Barbieri, U. Rome Tor Vergata (BSD)
+  * Code derived from Jonathan Hogg, STFC (BSD)
+  * Code derived from KAUST researchers (BSD/Apache-2.0)
+  * Code from Norbert Juffa (BSD)
+  * lz4 compression library (BSD-2-Clause)
+  * Boost Math Toolkit (Boost Software License)
+
+The complete and authoritative listing, including full license texts, is
+in CUDA EULA Section 2.7 (Attachment B). Downstream consumers redistributing
+the CUDA BLAS Library components are subject to those third-party licenses
+as well as the CUDA EULA itself.
+
+------------------------------------------------------------------------------
+3.4 Audio and video codec disclaimer (CUDA EULA Section 2.4)
+------------------------------------------------------------------------------
+
+NVIDIA does not grant rights regarding audio and/or video encoders and
+decoders. Any third-party licensing or royalty obligations associated with
+audio codec usage in downstream applications (e.g., MPEG-LA, MP3, AAC) are
+the sole responsibility of those downstream applications and their
+operators. This repository does not redistribute audio/video codecs.
+
+------------------------------------------------------------------------------
+3.5 Export controls (CUDA EULA Section 1.7)
+------------------------------------------------------------------------------
+
+The redistributed CUDA components are subject to United States export laws
+and regulations, including restrictions administered by the U.S. Bureau of
+Industry and Security and the U.S. Department of Treasury's Office of
+Foreign Assets Control (OFAC). Downstream consumers must not ship,
+transfer, or export these components to any country or end user prohibited
+by U.S. law.
+
+------------------------------------------------------------------------------
+3.6 Trademarks
+------------------------------------------------------------------------------
+
+NVIDIA, the NVIDIA logo, CUDA, cuBLAS, and other NVIDIA product or service
+names are trademarks and/or registered trademarks of NVIDIA Corporation in
+the U.S. and other countries. Use in this NOTICE is for descriptive
+purposes only and does not indicate sponsorship or endorsement.
+
+------------------------------------------------------------------------------
+3.7 Warranty and liability disclaimer
+------------------------------------------------------------------------------
+
+The NVIDIA CUDA Toolkit Redistributable Components are provided "AS IS" and
+"WITH ALL FAULTS" without warranty of any kind as set forth in CUDA EULA
+Section 1.4. NVIDIA's liability is limited as set forth in CUDA EULA
+Section 1.5.
+
+
+================================================================================
+4. Vulkan
+================================================================================
+
+The Vulkan-flavored Whisper binary (ggml-vulkan-whisper.dll) is built
+against the Vulkan API. This repository does NOT redistribute the Vulkan
+loader itself (vulkan-1.dll); the Vulkan loader is supplied by the user's
+GPU driver installation and is loaded dynamically at runtime.
+
+For reference, the upstream Vulkan Loader is published by The Khronos
+Group at https://github.com/KhronosGroup/Vulkan-Loader under the
+Apache License 2.0, but no Vulkan Loader binaries are present in this
+repository's releases.
+
+
+================================================================================
+Disclaimer
+================================================================================
+
+This NOTICE file is maintained by FieldCure Co., Ltd. as a good-faith
+record of redistributed third-party software. It is informational; the
+authoritative license texts are those published by the respective upstream
+projects at the URLs referenced above, and the CUDA EULA at the URL given
+in Section 3.
+
+If a discrepancy is identified between this NOTICE and an upstream license
+or the CUDA EULA, the upstream license or CUDA EULA governs. To report
+corrections, file an issue at:
+
+    https://github.com/fieldcure/fieldcure-whisper-runtimes/issues
+
+This NOTICE is not legal advice and is not a substitute for review by
+qualified counsel. Downstream redistributors are responsible for
+independently verifying their compliance with all applicable license terms,
+including the CUDA EULA in effect at the time of their redistribution.
